@@ -3,7 +3,8 @@ import numpy as np
 
 # Função para ler dados do dataset
 def LerArquivo(nome):
-    instancia = np.loadtxt(f"Datasets/{nome}.txt", dtype=int)
+    with open(f"Datasets/{nome}.txt") as f:
+        instancia = [list(map(int, linha.split())) for linha in f.readlines()]
     return instancia
 
 # Função para salvar dados que tiramos após operações com o dataset
