@@ -4,7 +4,8 @@ from Operacao.operacao import *
 def main():
     arquivo = 'instance_0020'
     instancia = LerArquivo(arquivo)
-    Operar(instancia)
+    pedidos, corredores, LB, UP = Operar(instancia)
+    SalvarArquivo(pedidos, corredores, LB, UP,"teste")
 
 if __name__ == '__main__':
     main()

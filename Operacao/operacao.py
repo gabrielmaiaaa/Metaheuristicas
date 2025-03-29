@@ -3,16 +3,26 @@ import numpy as np
 
 def Operar(instancia):
     cabecalho = instancia[0]
-    corpo = instancia[1:]
+    corpo = instancia[1:-1]
     LB, UP = instancia[-1]
+    pedidos = {}
+    corredores = {}
+
     for o in range(cabecalho[0]):
-        print(f"Pedido {o}")
+        pedidos[o] = []
+
         for itens in corpo[o]:
-            print(itens)
+            pedidos[o].append(itens)
     
     for a in range(cabecalho[0], cabecalho[0] + cabecalho[2]):
-        print(f"Corredor {a}")
-        for corredores in corpo[a]:
-            print(corredores)
+        indice = a - cabecalho[0]
+        corredores[indice] = []
 
+        for corredor in corpo[a]:
+            corredores[indice].append(corredor)
+            
+    print(f"Pedidos: {pedidos}")
+    print(f"Corredores: {corredores}")
     print(f"LB: {LB} e UP: {UP}")
+    
+    return pedidos, corredores, LB, UP

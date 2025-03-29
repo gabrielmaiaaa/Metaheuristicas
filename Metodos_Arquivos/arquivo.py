@@ -8,5 +8,15 @@ def LerArquivo(nome):
     return instancia
 
 # Função para salvar dados que tiramos após operações com o dataset
-def SalvarArquivo(dados, nome):
-    return np.savetxt(f"Salvar Dados/{nome}.txt", dados, fmt="%d")
+def SalvarArquivo(pedidos, corredores, LB, UP, nome):
+    with open(f"Salvar Dados/{nome}.txt", 'w') as f:
+        f.write("Pedidos:\n")
+        for key, value in pedidos.items():
+            f.write(f"{key}: {' '.join(map(str, value))}\n")
+        
+        f.write("\nCorredores:\n")
+        for key, value in corredores.items():
+            f.write(f"{key}: {' '.join(map(str, value))}\n")
+
+        f.write("\nLimite Inferior e Limite Superior:\n")
+        f.write(f"{LB} {UP}\n")
