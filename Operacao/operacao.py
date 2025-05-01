@@ -1,6 +1,3 @@
-# Arquivo que vou utilizar para fazer algumas operações com os Datasets
-import numpy as np
-
 def Operar(instancia):
     cabecalho = instancia[0]
     corpo = instancia[1:-1]
@@ -21,8 +18,8 @@ def Operar(instancia):
         for corredor in corpo[a]:
             corredores[indice].append(corredor)
             
-    print(f"Pedidos: {pedidos}")
-    print(f"Corredores: {corredores}")
-    print(f"LB: {LB} e UP: {UP}")
+    # print(f"Pedidos: {pedidos}")
+    # print(f"Corredores: {corredores}")
+    # print(f"LB: {LB} e UP: {UP}")
     
     return pedidos, corredores, LB, UP
