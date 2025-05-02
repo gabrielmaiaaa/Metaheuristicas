@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy
 
 def sortAcess(listAcess):
     listAcess.sort(key=lambda acess: acess['totalItens'], reverse=True)
@@ -12,7 +13,6 @@ def sortAcess(listAcess):
 
 def getAcessList(acess):    
     listTest = []
-    
 
     for key, value in acess.items():
         listAcess = {
@@ -36,24 +36,50 @@ def getAcessList(acess):
     return sortAcess(listTest)
 
 def getOrderList(order):
-    total_order={}
+    list_Order = []
 
     for key, value in order.items():
+        total_order={
+            'id': key,
+            'listOrder': {}
+        }
+
         for i in range(1, len(value), 2):
             num_pedido = value[i]
             repeticoes = value[i+1]
-            total_order[num_pedido] = total_order.get(num_pedido, 0) + repeticoes
+            total_order['listOrder'][num_pedido] = repeticoes
+        
+        list_Order.append(total_order)
 
-    print(total_order)
-    return total_order
+    print(list_Order)
+    return list_Order
 
 def calculate_score(list_order, wave_pedidos, LB=None, UP=None):
     qtd = 0
+    list = []
+    
+    temp_listOrder = deepcopy(list_order)
+    # temp_wave = wave_pedidos.copy()
+    temp_wave = deepcopy(wave_pedidos)
 
-    for i in range(len(list_order)):
-        if list_order.get(i, 0) - wave_pedidos.get(i, 0) <= 0:
-            qtd += list_order.get(i, 0)
+    for order in temp_listOrder:
+        listOrder = order['listOrder']
+        
+        pedido_atendido = True
+        for id_pedido, qtd_pedido in listOrder.items():
+            if temp_wave.get(id_pedido, 0) < qtd_pedido:
+                pedido_atendido = False
+                continue
+
+        if pedido_atendido:
+            for id_pedido, qtd_pedido in listOrder.items():
+                temp_wave[id_pedido] -= qtd_pedido
+                qtd += qtd_pedido
+                if order['id'] not in list:
+                    list.append(order['id'])
     
     if UP is not None:
         return qtd < UP
-    return qtd
+    if LB is not None:
+        return qtd > LB
+    return qtd, list
