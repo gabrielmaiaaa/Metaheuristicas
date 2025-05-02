@@ -38,7 +38,7 @@ def getWaveRandom(list_order, list_acess, LB, UP):
     }
 
     for i in range(len(list_acess)):
-        id = random.randrange(0, len(list_acess), 2)
+        id = random.randrange(0, len(list_acess))
         
         if list_acess[id]['id'] in wave['idAcess']:
             continue
