@@ -1,10 +1,12 @@
+import random
+
 def sortAcess(listAcess):
     listAcess.sort(key=lambda acess: acess['totalItens'], reverse=True)
     listAcess.sort(key=lambda acess: acess['orderTotal'], reverse=True)
 
-    print(listAcess)
-    print(len(listAcess))
-    print(listAcess[0])
+    # print(listAcess)
+    # print(len(listAcess))
+    # print(listAcess[0])
 
     return listAcess
 
@@ -56,7 +58,7 @@ def calculate_score(list_order, wave_pedidos, LP=None, UP=None):
         return qtd < UP
     return qtd
 
-def getWave(list_order, list_acess, LP, UP):
+def getWaveGulosa(list_order, list_acess, LP, UP):
     wave = {
         'idAcess': [],
         'pedidosAtendido': {},
@@ -84,10 +86,39 @@ def getWave(list_order, list_acess, LP, UP):
     print(wave)
     return wave
     
+def getWaveRandom(list_order, list_acess, LP, UP):
+    wave = {
+        'idAcess': [],
+        'pedidosAtendido': {},
+        'totalUnidades': 0,
+        'score': 0
+    }
+
+    for i in range(len(list_acess)):
+        id = random.randrange(0, len(list_acess), 2)
+        temp_pedidos = wave['pedidosAtendido'].copy()
+        
+        for j in range(0, len(list_acess[id]['data']), 2):
+            item_id = list_acess[id]['data'][j]
+            quantidade = list_acess[id]['data'][j + 1]
+            temp_pedidos[item_id] = temp_pedidos.get(item_id, 0) + quantidade
+
+        if not calculate_score(list_order, temp_pedidos, LP, UP):
+            break  
+        
+        wave['pedidosAtendido'] = temp_pedidos
+        wave['idAcess'].append(list_acess[id]['id'])
+        wave['totalUnidades'] = calculate_score(list_order, wave['pedidosAtendido'])
+        
+    wave['score'] = wave['totalUnidades'] / len(wave['idAcess']) if wave['idAcess'] else 0
+
+    print(wave)
+    return wave
+    
 
 def construction(order, acess, LP, UP):
 
     list_order = getOrderList(order)
     list_acess = getListAcess(acess)
-    getWave(list_order, list_acess, LP, UP)
+    getWaveGulosa(list_order, list_acess, LP, UP)
 
