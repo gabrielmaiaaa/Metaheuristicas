@@ -58,9 +58,9 @@ def calculate_score(list_order, wave_pedidos, LB=None, UP=None):
     qtd = 0
     list = []
     
+    temp_wave = deepcopy(wave_pedidos)
     temp_listOrder = deepcopy(list_order)
     # temp_wave = wave_pedidos.copy()
-    temp_wave = deepcopy(wave_pedidos)
 
     for order in temp_listOrder:
         listOrder = order['listOrder']

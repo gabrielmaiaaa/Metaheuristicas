@@ -47,7 +47,6 @@ def refine_wave(wave, list_order, list_acess, LP, UP):
             nova_ids = wave['idAcess'][:]
             nova_ids.remove(id_out)
             nova_ids.append(id_in)
-            print(nova_ids)
 
             nova_wave = gerar_wave_a_partir_de_ids(nova_ids, list_acess, list_order, LP, UP)
 
@@ -85,7 +84,7 @@ def getWaveGulosa(list_order, list_acess, LB, UP):
         
     wave['score'] = wave['totalUnidades'] / len(wave['idAcess']) if wave['idAcess'] else 0
 
-    print(wave)
+    print(f'\nWave: {wave}\n')
     return wave
     
 def getWaveRandom(list_order, list_acess, LB, UP):
@@ -126,7 +125,7 @@ def getWaveRandom(list_order, list_acess, LB, UP):
 def construction(order, acess, LP, UP):
     list_order = getOrderList(order)
     list_acess = getAcessList(acess)
-    wave = getWaveGulosa(list_order, list_acess, LP, UP)
+    wave = getWaveRandom(list_order, list_acess, LP, UP)
 
     refined_wave = refine_wave(wave, list_order, list_acess, LP, UP)
 
