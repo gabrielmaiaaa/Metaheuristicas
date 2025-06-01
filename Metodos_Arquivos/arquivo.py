@@ -18,13 +18,15 @@ def SalvarArquivo(pedidos, corredores, LB, UP, nome):
         f.write("\nLimite Inferior e Limite Superior:\n")
         f.write(f"{LB} {UP}\n")
 
-def SalvarResultados(wave,nome):
+def SalvarResultados(wave, time, timeRSO, nome):
     cont = 0
     with open(f"Salvar Dados/{nome}Resultados.txt", 'w') as f:
-        f.write("Wave:\n")
         for key, value in wave.items():
             cont += 1
             if cont <= 3:
                 f.write(f"{key}: {', '.join(map(str, value))}\n")
             else:
                 f.write(f"{key}: {value}\n")
+        
+        f.write(f"Tempo Gasto Heuristica: {time}\n")
+        f.write(f"Tempo Gasto RSO: {timeRSO}\n")

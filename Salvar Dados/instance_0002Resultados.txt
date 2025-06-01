@@ -1,6 +1,7 @@
-Wave:
 idAcess: 26
 itensDePedidosAtendidos: 6
 pedidosAtendidos: 6
 totalUnidades: 1
 score: 1.0
+Tempo Gasto Heuristica: 0.0008786999969743192
+Tempo Gasto RSO: 0.025656099955085665

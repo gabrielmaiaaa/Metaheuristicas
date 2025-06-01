@@ -1,4 +1,5 @@
 import random
+import time
 from Metodos_Arquivos.arquivo import *
 from Heuristic.utils import calculate_score, getAcessList, getOrderList
 random.seed(6743)
@@ -223,7 +224,13 @@ def rso(wave, list_order, list_acess, LP, UP, max_inter=30):
 def construction(order, acess, LP, UP):
     list_order = getOrderList(order)
     list_acess = getAcessList(acess)
+
+    inicio = time.perf_counter()
     wave = getWaveRandom(list_order, list_acess, LP, UP)
+    fim = time.perf_counter()
+
+    inicioRSO = time.perf_counter()
     bestSolution = rso(wave, list_order, list_acess, LP, UP)
-    
-    return bestSolution
+    fimRSO = time.perf_counter()
+
+    return bestSolution, fim-inicio, fimRSO-inicioRSO

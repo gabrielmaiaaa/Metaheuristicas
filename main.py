@@ -13,8 +13,8 @@ def main():
         instancia = LerArquivo(name)
         pedidos, corredores, LB, UP = Operar(instancia)
         SalvarArquivo(pedidos, corredores, LB, UP,name)
-        wave = construction(pedidos, corredores, LB, UP)
-        SalvarResultados(wave, name)
+        wave, time, timeRSO = construction(pedidos, corredores, LB, UP)
+        SalvarResultados(wave, time, timeRSO, name)
 
 if __name__ == '__main__':
     main()
