@@ -51,7 +51,7 @@ def getOrderList(order):
         
         list_Order.append(total_order)
 
-    print(list_Order)
+    # print(list_Order)
     return list_Order
 
 def calculate_score(list_order, wave_pedidos, LB=None, UP=None):

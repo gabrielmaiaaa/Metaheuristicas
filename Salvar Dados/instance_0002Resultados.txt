@@ -1,0 +1,6 @@
+Wave:
+idAcess: 26
+itensDePedidosAtendidos: 6
+pedidosAtendidos: 6
+totalUnidades: 1
+score: 1.0
