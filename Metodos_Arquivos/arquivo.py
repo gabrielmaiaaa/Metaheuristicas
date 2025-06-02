@@ -20,7 +20,7 @@ def SalvarArquivo(pedidos, corredores, LB, UP, nome):
 
 def SalvarResultados(wave, time, timeRSO, nome):
     cont = 0
-    with open(f"Salvar Dados/{nome}Resultados.txt", 'w') as f:
+    with open(f"Salvar Dados/{nome}Resultados3Linha.txt", 'w') as f:
         for key, value in wave.items():
             cont += 1
             if cont <= 3:

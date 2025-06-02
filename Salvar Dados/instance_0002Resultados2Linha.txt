@@ -1,0 +1,7 @@
+idAcess: 21
+itensDePedidosAtendidos: 6
+pedidosAtendidos: 6
+totalUnidades: 1
+score: 1.0
+Tempo Gasto Heuristica: 0.00037289998726919293
+Tempo Gasto RSO: 0.013109599996823817
