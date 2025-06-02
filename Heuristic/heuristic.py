@@ -36,29 +36,6 @@ def gerar_wave_a_partir_de_ids(ids, list_acess, list_order, LP, UP):
 
     return wave
 
-def refine_wave(wave, list_order, list_acess, LP, UP):
-    melhor_score = wave['score']
-    melhor_wave = wave.copy()
-
-    corredores_na_wave = set(wave['idAcess'])
-    corredores_fora_wave = [a for a in list_acess if a['id'] not in corredores_na_wave]
-
-    for id_out in wave['idAcess']:
-        for novo_acesso in corredores_fora_wave:
-            id_in = novo_acesso['id']
-
-            nova_ids = wave['idAcess'][:]
-            nova_ids.remove(id_out)
-            nova_ids.append(id_in)
-
-            nova_wave = gerar_wave_a_partir_de_ids(nova_ids, list_acess, list_order, LP, UP)
-
-            if nova_wave and nova_wave['score'] > melhor_score:
-                melhor_wave = nova_wave
-                melhor_score = nova_wave['score']
-                print("Melhor score após refinamento:", melhor_score)
-                return melhor_wave
-
 def getWaveGulosa(list_order, list_acess, LB, UP):
     wave = {
         'idAcess': [],
@@ -122,6 +99,7 @@ def getWaveRandom(list_order, list_acess, LB, UP):
     print(wave)
     return wave
 
+
 def gerar_vizinhos(wave, list_acess, list_order, LP, UP, tabuList, interacao):
     vizinhos = []
     ids_wave = wave['idAcess'][:]
@@ -157,7 +135,7 @@ def gerar_vizinhos(wave, list_acess, list_order, LP, UP, tabuList, interacao):
 
         nova_wave = gerar_wave_a_partir_de_ids(nova_ids, list_acess, list_order, LP, UP)
 
-        if nova_wave and nova_wave['idAcess'] not in tabuList and nova_wave['score'] > wave['score']:
+        if nova_wave and nova_wave['idAcess'] not in tabuList:
             vizinhos.append(nova_wave)
 
         tentativas += 1
@@ -169,13 +147,13 @@ def reinicializacao_parcial(solucao, list_acess, list_order, LP, UP, taxa=0.5):
     n_manter = max(1, int(len(solucao['idAcess']) * taxa))
     ids_manter = random.sample(solucao['idAcess'], n_manter)
     corredores_fora = [a['id'] for a in list_acess if a['id'] not in ids_manter]
-    n_adicionar = len(solucao['idAcess']) - n_manter
+    n_adicionar = max(len(solucao['idAcess']) - n_manter, 1)
     ids_novos = random.sample(corredores_fora, n_adicionar)
     nova_ids = ids_manter + ids_novos
     nova_wave = gerar_wave_a_partir_de_ids(nova_ids, list_acess, list_order, LP, UP)
     return nova_wave
 
-def rso(wave, list_order, list_acess, LP, UP, max_inter=30):
+def rso(wave, list_order, list_acess, LP, UP, max_inter=100):
     solucaoInicial = wave
     bestSolution = solucaoInicial
     tabuList = []
@@ -187,22 +165,26 @@ def rso(wave, list_order, list_acess, LP, UP, max_inter=30):
     for _ in range(max_inter):
         vizinhos = gerar_vizinhos(bestSolution, list_acess, list_order, LP, UP, tabuList, interacao)
         
-        if not vizinhos:
-            estaguinado += 1
-            interacao = max(interacao - 1, 5)
-            if estaguinado >= int(max_inter/4):
-                bestSolution = reinicializacao_parcial(bestSolution, list_acess, list_order, LP, UP)
-                estaguinado = 0
-            continue
-
         if interacao % 5 == 0:
             vizinhos.append(reinicializacao_parcial(bestSolution, list_acess, list_order, LP, UP))
             interacao = max(interacao - 1, 5)
+
+        # if not vizinhos:
+        #     estaguinado += 1
+        #     interacao = max(interacao - 1, 5)
+        if estaguinado >= int(max_inter/4):
+            vizinhos.append(reinicializacao_parcial(bestSolution, list_acess, list_order, LP, UP))
+            estaguinado = 0
+        #     continue
 
         melhor_vizinho = max(vizinhos, key=lambda w: w['score'])
         
         if melhor_vizinho['score'] > bestSolution['score']:
             bestSolution = melhor_vizinho
+            estaguinado = 0
+        else:
+            estaguinado += 1
+            interacao = min(interacao + 1, 30)
         
         tabuList.append(melhor_vizinho['idAcess'])
         if len(tabuList) > tabuTenure:
@@ -213,7 +195,6 @@ def rso(wave, list_order, list_acess, LP, UP, max_inter=30):
         else:
             tabuTenure = max(tabuTenure - 1, 3)
         historico.append(melhor_vizinho)
-        interacao = min(interacao + 1, 30)
 
     print(bestSolution)
     print(interacao)
@@ -228,7 +209,7 @@ def construction(order, acess, LP, UP):
     inicio = time.perf_counter()
     wave = getWaveRandom(list_order, list_acess, LP, UP)
     fim = time.perf_counter()
-
+    print(wave)
     inicioRSO = time.perf_counter()
     bestSolution = rso(wave, list_order, list_acess, LP, UP)
     fimRSO = time.perf_counter()

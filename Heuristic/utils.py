@@ -55,31 +55,24 @@ def getOrderList(order):
     return list_Order
 
 def calculate_score(list_order, wave_pedidos, LB=None, UP=None):
-    qtd = 0
-    list = []
-    
-    temp_wave = deepcopy(wave_pedidos)
-    temp_listOrder = deepcopy(list_order)
-    # temp_wave = wave_pedidos.copy()
+    qtd_total = 0
+    pedidos_atendidos = set()
+    estoque_wave = wave_pedidos.copy()
 
-    for order in temp_listOrder:
-        listOrder = order['listOrder']
+    for order in list_order:
+        pedido = order['listOrder']
+        pode_atender = all(estoque_wave.get(item, 0) >= qtd for item, qtd in pedido.items())
         
-        pedido_atendido = True
-        for id_pedido, qtd_pedido in listOrder.items():
-            if temp_wave.get(id_pedido, 0) < qtd_pedido:
-                pedido_atendido = False
-                continue
+        if pode_atender:
+            for item, qtd in pedido.items():
+                estoque_wave[item] -= qtd
+                qtd_total += qtd
+            pedidos_atendidos.add(order['id'])
 
-        if pedido_atendido:
-            for id_pedido, qtd_pedido in listOrder.items():
-                temp_wave[id_pedido] -= qtd_pedido
-                qtd += qtd_pedido
-                if order['id'] not in list:
-                    list.append(order['id'])
-    
     if UP is not None:
-        return qtd < UP
+        return qtd_total < UP
     if LB is not None:
-        return qtd > LB
-    return qtd, list
+        return qtd_total > LB
+
+    return qtd_total, list(pedidos_atendidos)
+

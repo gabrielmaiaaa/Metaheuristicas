@@ -15,6 +15,12 @@ def main():
         SalvarArquivo(pedidos, corredores, LB, UP,name)
         wave, time, timeRSO = construction(pedidos, corredores, LB, UP)
         SalvarResultados(wave, time, timeRSO, name)
+    # arquivo = 'instance_0020'
+    # instancia = LerArquivo(arquivo)
+    # pedidos, corredores, LB, UP = Operar(instancia)
+    # SalvarArquivo(pedidos, corredores, LB, UP,arquivo)
+    # wave, time, timeRSO = construction(pedidos, corredores, LB, UP)
+    # SalvarResultados(wave, time, timeRSO, arquivo)
 
 if __name__ == '__main__':
     main()
