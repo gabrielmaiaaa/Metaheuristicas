@@ -1,0 +1,8 @@
+idAccess: 21
+itensDePedidosAtendidos: 6
+pedidosAtendidos: 6
+totalUnidades: 1
+score: 1.0
+Tempo gasto para construir a Heuristica: 0.00035539999953471124
+Tempo gasto para construir o Refinamento: 4.520000220509246e-05
+Tempo gasto para construir o RSO: 0.015535899998212699

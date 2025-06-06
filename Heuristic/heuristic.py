@@ -98,23 +98,41 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
     historico = []
     estagnado = 0
     interacao = 5
+    maxVizinhos = 30
+    interacao_maxVizinhos_counter = 0
+    
+    if max_inter <= 50:
+        patience = int(max_inter/2)
+    elif 51 <= max_inter <= 100:
+        patience = int(max_inter/4)
+    else:
+        patience = int(max_inter/6)
 
     for _ in range(max_inter):
         vizinhos = gerar_vizinhos(best, list_access, list_order, LP, UP, tabuList, interacao)
         
         if interacao % 5 == 0:
-            vizinhos.append(reinicializacao_parcial(best, list_access, list_order, LP, UP, 0.2))
+            taxa = random.choice([0.1, 0.2, 0.3, 0.4])
+            vizinhos.append(reinicializacao_parcial(best, list_access, list_order, LP, UP, taxa))
             interacao = max(interacao - 1, 5)
 
-        if estagnado >= int(max_inter/4):
-            vizinhos.append(reinicializacao_parcial(best, list_access, list_order, LP, UP, 0.5))
+        if estagnado >= patience:
+            taxa = random.choice([0.5, 0.6, 0.7, 0.8])
+            vizinhos.append(reinicializacao_parcial(best, list_access, list_order, LP, UP, taxa))
             estagnado = 0
+            max_inter += 10
+            if max_inter <= 50:
+                patience = int(max_inter/2)
+            elif 51 <= max_inter <= 100:
+                patience = int(max_inter/4)
+            else:
+                patience = int(max_inter/6)
             # print(_)
             # break
         
         if not vizinhos:
             estagnado += 1
-            interacao = min(interacao + 1, 30)
+            interacao = min(interacao + 1, maxVizinhos)
             continue
             
         melhorVizinho = max(vizinhos, key=lambda w: w['score'])
@@ -128,7 +146,7 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
             estagnado = 0
         else:
             estagnado += 1
-            interacao = min(interacao + 1, 30)
+            interacao = min(interacao + 1, maxVizinhos)
 
         if melhorVizinho in historico[-10:]:
             tabuTenure = min(tabuTenure + 1, 30)
@@ -136,6 +154,14 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
             tabuTenure = max(tabuTenure - 1, 3)     
                
         historico.append(melhorVizinho)
+        if interacao == maxVizinhos:
+            interacao_maxVizinhos_counter += 1
+        else:
+            interacao_maxVizinhos_counter = 0
+
+        if interacao_maxVizinhos_counter > 10:  
+            maxVizinhos += 5
+            interacao_maxVizinhos_counter = 0
     
     # print(best)
     return best
@@ -146,10 +172,14 @@ def construction(order, access, LP, UP):
     
     start = time.perf_counter()
     wave = build_wave(list_order, list_access, LP, UP, 'random')
-    build_time = time.perf_counter() - start
+    heuristic_time = time.perf_counter() - start
+
+    start_refi = time.perf_counter()
+    waveRefinmanto =refine_wave(wave, list_order, list_access, LP, UP)
+    refinamento_time = time.perf_counter() - start_refi
     
     start_rso = time.perf_counter()
     best = rso(wave, list_order, list_access, LP, UP)
     rso_time = time.perf_counter() - start_rso
     
-    return best, build_time, rso_time
+    return best, heuristic_time, refinamento_time, rso_time
