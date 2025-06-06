@@ -1,7 +1,0 @@
-idAcess: 1, 4, 2
-itensDePedidosAtendidos: 0, 1, 2, 4, 3
-pedidosAtendidos: 1, 2, 3, 4
-totalUnidades: 11
-score: 3.6666666666666665
-Tempo Gasto Heuristica: 5.909998435527086e-05
-Tempo Gasto RSO: 0.012181100028101355

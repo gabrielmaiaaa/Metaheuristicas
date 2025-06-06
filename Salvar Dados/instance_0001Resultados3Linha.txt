@@ -1,7 +1,0 @@
-idAcess: 71, 97
-itensDePedidosAtendidos: 11, 17, 28, 40, 52, 54, 55, 56, 62, 75, 77, 80, 83, 90, 92, 106, 109, 113, 119, 130, 134, 141, 5, 6, 7, 12, 16, 39, 43, 69, 87, 105, 114, 128, 139, 146
-pedidosAtendidos: 41, 42, 11, 55, 23, 24, 57, 26, 60
-totalUnidades: 30
-score: 15.0
-Tempo Gasto Heuristica: 0.012143899977672845
-Tempo Gasto RSO: 0.4568056999705732

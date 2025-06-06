@@ -1,10 +1,8 @@
-# Função para ler dados do dataset
 def LerArquivo(nome):
     with open(f"Datasets/{nome}.txt") as f:
         instancia = [list(map(int, linha.split())) for linha in f.readlines()]
     return instancia
 
-# Função para salvar dados que tiramos após operações com o dataset
 def SalvarArquivo(pedidos, corredores, LB, UP, nome):
     with open(f"Salvar Dados/{nome}.txt", 'w') as f:
         f.write("Pedidos:\n")
@@ -20,7 +18,7 @@ def SalvarArquivo(pedidos, corredores, LB, UP, nome):
 
 def SalvarResultados(wave, time, timeRSO, nome):
     cont = 0
-    with open(f"Salvar Dados/{nome}Resultados3Linha.txt", 'w') as f:
+    with open(f"Salvar Dados/{nome}Resultados.txt", 'w') as f:
         for key, value in wave.items():
             cont += 1
             if cont <= 3:

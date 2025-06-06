@@ -1,21 +1,21 @@
 import random
 from copy import deepcopy
 
-def sortAcess(listAcess):
-    listAcess.sort(key=lambda acess: acess['totalItens'], reverse=True)
-    listAcess.sort(key=lambda acess: acess['orderTotal'], reverse=True)
+def sortAccess(listAccess):
+    listAccess.sort(key=lambda access: access['totalItens'], reverse=True)
+    listAccess.sort(key=lambda access: access['orderTotal'], reverse=True)
 
-    # print(listAcess)
-    # print(len(listAcess))
-    # print(listAcess[0])
+    # print(listAccess)
+    # print(len(listAccess))
+    # print(listAccess[0])
 
-    return listAcess
+    return listAccess
 
-def getAcessList(acess):    
+def getAccessList(access):    
     listTest = []
 
-    for key, value in acess.items():
-        listAcess = {
+    for key, value in access.items():
+        listAccess = {
             'id': key,
             'orderTotal': value[0],
             'data': [],
@@ -24,16 +24,16 @@ def getAcessList(acess):
         qtd = 0
 
         for i in range(1, len(value)):
-            num_acess = value[i]
-            listAcess['data'].append(num_acess)
+            num_access = value[i]
+            listAccess['data'].append(num_access)
 
             if i%2 == 0:
-                qtd += num_acess
+                qtd += num_access
                 
-        listAcess['totalItens'] = qtd
-        listTest.append(listAcess)
+        listAccess['totalItens'] = qtd
+        listTest.append(listAccess)
     
-    return sortAcess(listTest)
+    return sortAccess(listTest)
 
 def getOrderList(order):
     list_Order = []
