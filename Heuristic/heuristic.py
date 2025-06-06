@@ -87,12 +87,13 @@ def reinicializacao_parcial(solucao, list_access, list_order, LP, UP, taxa):
     ids = set(random.sample(solucao['idAccess'], max(1, int(len(solucao['idAccess']) * taxa))))
     newIds = [a['id'] for a in list_access if a['id'] not in ids]
     bestIds = set(random.sample(newIds, min(len(newIds), len(solucao['idAccess']) - len(ids))))
-    return gerar_wave_a_partir_de_ids(ids | bestIds, list_access, list_order, LP, UP)
+    return gerar_wave_a_partir_de_ids(ids, list_access, list_order, LP, UP)
 
 def rso(wave, list_order, list_access, LP, UP, max_inter=100):
     best = wave
     tabuList = []
-    historico = []
+    historico = [best]
+    vizinhos = []
     tabuList = []
     tabuTenure = 1
     historico = []
@@ -110,25 +111,12 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
 
     for _ in range(max_inter):
         vizinhos = gerar_vizinhos(best, list_access, list_order, LP, UP, tabuList, interacao)
-        
+
+        # tenho q fazer isso aqui ser otimizado
         if interacao % 5 == 0:
             taxa = random.choice([0.1, 0.2, 0.3, 0.4])
             vizinhos.append(reinicializacao_parcial(best, list_access, list_order, LP, UP, taxa))
-            interacao = max(interacao - 1, 5)
-
-        if estagnado >= patience:
-            taxa = random.choice([0.5, 0.6, 0.7, 0.8])
-            vizinhos.append(reinicializacao_parcial(best, list_access, list_order, LP, UP, taxa))
-            estagnado = 0
-            max_inter += 10
-            if max_inter <= 50:
-                patience = int(max_inter/2)
-            elif 51 <= max_inter <= 100:
-                patience = int(max_inter/4)
-            else:
-                patience = int(max_inter/6)
-            # print(_)
-            # break
+            # interacao = max(interacao - 1, 5)
         
         if not vizinhos:
             estagnado += 1
@@ -154,17 +142,32 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
             tabuTenure = max(tabuTenure - 1, 3)     
                
         historico.append(melhorVizinho)
+
         if interacao == maxVizinhos:
             interacao_maxVizinhos_counter += 1
         else:
-            interacao_maxVizinhos_counter = 0
+            interacao_maxVizinhos_counter -= 1
 
-        if interacao_maxVizinhos_counter > 10:  
+        if interacao_maxVizinhos_counter > 5:  
             maxVizinhos += 5
             interacao_maxVizinhos_counter = 0
+        
+        if estagnado >= patience:
+            taxa = random.choice([0.5, 0.6, 0.7, 0.8])
+            best = reinicializacao_parcial(best, list_access, list_order, LP, UP, taxa)
+            estagnado = 0
+            max_inter += 20
+            if max_inter <= 50:
+                patience = int(max_inter/2)
+            elif 51 <= max_inter <= 100:
+                patience = int(max_inter/4)
+            else:
+                patience = int(max_inter/6)
     
-    # print(best)
-    return best
+    bes = max(historico, key=lambda w: w['score'])
+    print(bes)
+    print(max_inter)
+    return bes
 
 def construction(order, access, LP, UP):
     list_order = getOrderList(order)
