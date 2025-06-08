@@ -3,6 +3,12 @@ itensDePedidosAtendidos: 2, 21, 37, 46, 49, 7, 12, 13, 34, 14, 17, 19, 40, 10, 1
 pedidosAtendidos: 1, 4, 8, 10, 11, 12, 14
 totalUnidades: 36
 score: 2.4
-Tempo gasto para construir a Heuristica: 0.001421299995854497
-Tempo gasto para construir o Refinamento: 0.0008364000022993423
-Tempo gasto para construir o RSO: 0.5064617999960319
+Tempo gasto para construir o RSO: 0.37426819998654537
+
+Heuristica
+Score: 0.543859649122807
+Tempo: 0.001305099984165281
+
+Heuristica Refinamento
+Score: 0.6666666666666666
+Tempo: 0.002109199995175004

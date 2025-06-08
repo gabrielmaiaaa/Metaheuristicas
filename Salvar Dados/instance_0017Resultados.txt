@@ -3,6 +3,12 @@ itensDePedidosAtendidos: 0, 36, 37, 39, 43, 55, 67, 82, 97, 101, 111, 124, 125, 
 pedidosAtendidos: 128, 257, 3, 136, 268, 398, 16, 152, 153, 26, 154, 155, 411, 33, 171, 45, 47, 49, 52, 183, 312, 318, 64, 192, 203, 78, 217, 92, 221, 350, 227, 101, 103, 232, 364, 110, 368, 113, 241, 369, 377, 381
 totalUnidades: 42
 score: 42.0
-Tempo gasto para construir a Heuristica: 0.02734799999598181
-Tempo gasto para construir o Refinamento: 0.003018700001121033
-Tempo gasto para construir o RSO: 1.6203165000042645
+Tempo gasto para construir o RSO: 1.174851200019475
+
+Heuristica
+Score: 10.176470588235293
+Tempo: 0.022692600003210828
+
+Heuristica Refinamento
+Score: 21.0
+Tempo: 0.02520640002330765

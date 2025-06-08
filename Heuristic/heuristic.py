@@ -176,13 +176,15 @@ def construction(order, access, LP, UP):
     start = time.perf_counter()
     wave = build_wave(list_order, list_access, LP, UP, 'random')
     heuristic_time = time.perf_counter() - start
+    heuristic_score = wave['score']
 
     start_refi = time.perf_counter()
     waveRefinmanto =refine_wave(wave, list_order, list_access, LP, UP)
-    refinamento_time = time.perf_counter() - start_refi
+    refinamento_time = time.perf_counter() - start
+    refinamento_score = waveRefinmanto['score']
     
     start_rso = time.perf_counter()
     best = rso(wave, list_order, list_access, LP, UP)
     rso_time = time.perf_counter() - start_rso
     
-    return best, heuristic_time, refinamento_time, rso_time
+    return best, heuristic_time, heuristic_score, refinamento_time, refinamento_score, rso_time

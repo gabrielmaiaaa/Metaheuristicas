@@ -3,6 +3,12 @@ itensDePedidosAtendidos: 0, 1, 2, 4, 3
 pedidosAtendidos: 0, 1, 2, 4
 totalUnidades: 10
 score: 5.0
-Tempo gasto para construir a Heuristica: 0.0001266999970539473
-Tempo gasto para construir o Refinamento: 0.0003541000041877851
-Tempo gasto para construir o RSO: 0.05351140000129817
+Tempo gasto para construir o RSO: 0.03516539998236112
+
+Heuristica
+Score: 5.0
+Tempo: 6.140000186860561e-05
+
+Heuristica Refinamento
+Score: 5.0
+Tempo: 0.00018760000239126384
