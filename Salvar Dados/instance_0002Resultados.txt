@@ -1,14 +1,14 @@
-idAccess: 21
-itensDePedidosAtendidos: 6
-pedidosAtendidos: 6
-totalUnidades: 1
-score: 1.0
-Tempo gasto para construir o RSO: 0.03045289998408407
+idAccess: 23
+itensDePedidosAtendidos: 4
+pedidosAtendidos: 4
+totalUnidades: 2
+score: 2.0
+Tempo gasto para construir o RSO: 0.03175200009718537
 
 Heuristica
 Score: 0.5
-Tempo: 0.00038219999987632036
+Tempo: 5.889998283237219e-05
 
 Heuristica Refinamento
 Score: 1.0
-Tempo: 0.0004582999972626567
+Tempo: 0.00010679999832063913

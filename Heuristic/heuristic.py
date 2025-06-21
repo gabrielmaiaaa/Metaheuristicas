@@ -1,7 +1,8 @@
 import random
 import time
+from types import new_class
 from Metodos_Arquivos.arquivo import *
-from Heuristic.utils import calculate_score, getAccessList, getOrderList
+from Heuristic.utils import calculate_score, getAccessList, getOrderList, verificaTamanhoUB, verificaTamanhoLB
 random.seed(6743)
 
 def build_wave(list_order, list_access, LB, UP, tipo):
@@ -26,10 +27,8 @@ def build_wave(list_order, list_access, LB, UP, tipo):
             quantidade = data[i+1]
             temp_items[item_id] = temp_items.get(item_id, 0) + quantidade
         
-        if not calculate_score(list_order, temp_items, LB, UP):
-            if tipo == 'gulosa':
-                break
-            continue
+        if verificaTamanhoUB(list_order, temp_items, UP):
+            break
         
         wave['idAccess'].append(access['id'])
         wave['itensDePedidosAtendidos'] = temp_items.copy()
@@ -79,6 +78,8 @@ def gerar_vizinhos(wave, list_access, list_order, LP, UP, tabuList, interacao):
             continue
             
         newWave = gerar_wave_a_partir_de_ids(newIds, list_access, list_order, LP, UP)
+        if verificaTamanhoLB(newWave, LP):
+            continue
         vizinhos.append(newWave)
     
     return vizinhos
@@ -86,8 +87,14 @@ def gerar_vizinhos(wave, list_access, list_order, LP, UP, tabuList, interacao):
 def reinicializacao_parcial(solucao, list_access, list_order, LP, UP, taxa):
     ids = set(random.sample(solucao['idAccess'], max(1, int(len(solucao['idAccess']) * taxa))))
     newIds = [a['id'] for a in list_access if a['id'] not in ids]
-    bestIds = set(random.sample(newIds, min(len(newIds), len(solucao['idAccess']) - len(ids))))
-    return gerar_wave_a_partir_de_ids(ids, list_access, list_order, LP, UP)
+    # print(f'ID: {ids}')
+    # print(f'newIds: {newIds}')
+    bestIds = set(random.sample(newIds, min(len(newIds), len(solucao['idAccess']) - len(ids)+1)))
+    # print(f'Best: {bestIds}')
+    # print(f'2: {ids | bestIds}')
+    # print(solucao['idAccess'])
+    # print()
+    return gerar_wave_a_partir_de_ids(ids | bestIds, list_access, list_order, LP, UP)
 
 def rso(wave, list_order, list_access, LP, UP, max_inter=100):
     best = wave
@@ -109,14 +116,17 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
     else:
         patience = int(max_inter/6)
 
+    patienceLR = patience/4
+
     for _ in range(max_inter):
         vizinhos = gerar_vizinhos(best, list_access, list_order, LP, UP, tabuList, interacao)
 
         # tenho q fazer isso aqui ser otimizado
-        if interacao % 5 == 0:
+        if estagnado >= patienceLR:
             taxa = random.choice([0.1, 0.2, 0.3, 0.4])
             vizinhos.append(reinicializacao_parcial(best, list_access, list_order, LP, UP, taxa))
             # interacao = max(interacao - 1, 5)
+            patienceLR += patience/4
         
         if not vizinhos:
             estagnado += 1
@@ -130,6 +140,8 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
             tabuList.pop(0)
         
         if melhorVizinho['score'] > best['score']:
+            # print(best)
+            # print()
             best = melhorVizinho
             estagnado = 0
         else:
@@ -157,6 +169,7 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
             best = reinicializacao_parcial(best, list_access, list_order, LP, UP, taxa)
             estagnado = 0
             max_inter += 20
+            patienceLR = patience/4
             if max_inter <= 50:
                 patience = int(max_inter/2)
             elif 51 <= max_inter <= 100:
@@ -166,6 +179,13 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
     
     bes = max(historico, key=lambda w: w['score'])
     print(bes)
+    historico.sort(key=lambda score: score['score'], reverse=True)
+    soma = 0
+    # for newWave in historico:
+    #     if verificaTamanhoLB(newWave, LP):
+    #         print("a")
+    #         print(newWave)
+    #         return newWave
     print(max_inter)
     return bes
 

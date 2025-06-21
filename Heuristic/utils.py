@@ -61,18 +61,44 @@ def calculate_score(list_order, wave_pedidos, LB=None, UP=None):
 
     for order in list_order:
         pedido = order['listOrder']
-        pode_atender = all(estoque_wave.get(item, 0) >= qtd for item, qtd in pedido.items())
+        pode_atender = all(
+            estoque_wave.get(item, 0) >= qtd 
+            for item, qtd in pedido.items()
+            )
         
         if pode_atender:
             for item, qtd in pedido.items():
                 estoque_wave[item] -= qtd
                 qtd_total += qtd
             pedidos_atendidos.add(order['id'])
-
-    if UP is not None:
-        return qtd_total < UP
-    if LB is not None:
-        return qtd_total > LB
+    # print(LB)
+    # print(qtd_total)
 
     return qtd_total, list(pedidos_atendidos)
 
+def verificaTamanhoUB(list_order, wave_pedidos, UP):
+    qtd_total = 0
+    pedidos_atendidos = set()
+    estoque_wave = wave_pedidos.copy()
+
+    for order in list_order:
+        pedido = order['listOrder']
+        pode_atender = all(
+            estoque_wave.get(item, 0) >= qtd 
+            for item, qtd in pedido.items()
+            )
+        
+        if pode_atender:
+            for item, qtd in pedido.items():
+                estoque_wave[item] -= qtd
+                qtd_total += qtd
+            pedidos_atendidos.add(order['id'])
+    # print(UP, qtd_total)
+
+    return qtd_total > UP
+
+def verificaTamanhoLB(wave, LB):
+    return wave['totalUnidades'] < LB
+
+def verificaTamanhoLBLoop(wave, LB):
+    return wave['totalUnidades'] > LB
