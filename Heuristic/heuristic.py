@@ -87,6 +87,8 @@ def gerarVizinhos(wave, listaCorredor, listaPedidos, LB, UB, tabuList, interacao
     }
     
     for _ in range(interacao):
+        # operacao = random.choice(list(operacoes.keys()))
+        # novoId = operacoes[operacao](idsCorredoresAtuais)
         operacao = escolher_operacao(listaPontuacao)
         novoId = operacoes[operacao](idsCorredoresAtuais)
         
@@ -112,7 +114,7 @@ def reiniciarWave(solucao, listaCorredor, listaPedidos, UB, taxa):
     waveAtualIds = set(random.sample(novoId, min(len(novoId), len(solucao['idCorredor']) - len(ids)+1)))
     return gerarNovaWave(ids | waveAtualIds, listaCorredor, listaPedidos, UB)
 
-def rso(wave, listaPedidos, listaCorredor, LB, UB, maximoInteracao=100, tempoLimite=10):
+def rso(wave, listaPedidos, listaCorredor, LB, UB, maximoInteracao=100, tempoLimite=0.2):
     waveAtual = wave
     historico = [waveAtual]
     vizinhos = []
@@ -187,6 +189,9 @@ def rso(wave, listaPedidos, listaCorredor, LB, UB, maximoInteracao=100, tempoLim
 
             estagnado = 0
             maximoInteracao += 50
+            # listaPontuacao[0] = max(0, listaPontuacao[0] - 0.2) 
+            # listaPontuacao[1] = max(0, listaPontuacao[1] - 0.2) 
+            # listaPontuacao[2] = max(0, listaPontuacao[2] - 0.2) 
 
             patience = int(maximoInteracao * 0.2)
             patienceLR = int(patience * 0.25)
