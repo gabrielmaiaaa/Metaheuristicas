@@ -1,104 +1,92 @@
-import random
-from copy import deepcopy
+def sortcorredor(listaCorredor):
+    listaCorredor.sort(key=lambda corredor: corredor['totalItens'], reverse=True)
+    listaCorredor.sort(key=lambda corredor: corredor['pedidosTotal'], reverse=True)
 
-def sortAccess(listAccess):
-    listAccess.sort(key=lambda access: access['totalItens'], reverse=True)
-    listAccess.sort(key=lambda access: access['orderTotal'], reverse=True)
+    return listaCorredor
 
-    # print(listAccess)
-    # print(len(listAccess))
-    # print(listAccess[0])
+def getListaCorredor(corredor):    
+    listaCorredor = []
 
-    return listAccess
-
-def getAccessList(access):    
-    listTest = []
-
-    for key, value in access.items():
-        listAccess = {
+    for key, value in corredor.items():
+        dicionarioCorredor = {
             'id': key,
-            'orderTotal': value[0],
+            'pedidosTotal': value[0],
             'data': [],
             'totalItens': 0
         }
         qtd = 0
 
         for i in range(1, len(value)):
-            num_access = value[i]
-            listAccess['data'].append(num_access)
+            numeroDeCorredores = value[i]
+            dicionarioCorredor['data'].append(numeroDeCorredores)
 
             if i%2 == 0:
-                qtd += num_access
+                qtd += numeroDeCorredores
                 
-        listAccess['totalItens'] = qtd
-        listTest.append(listAccess)
+        dicionarioCorredor['totalItens'] = qtd
+        listaCorredor.append(dicionarioCorredor)
     
-    return sortAccess(listTest)
+    return sortcorredor(listaCorredor)
 
-def getOrderList(order):
-    list_Order = []
+def getListaPedidos(pedidos):
+    listaPedidos = []
 
-    for key, value in order.items():
-        total_order={
+    for key, value in pedidos.items():
+        dicionarioPedidos = {
             'id': key,
-            'listOrder': {}
+            'dicionarioPedidos': {}
         }
 
         for i in range(1, len(value), 2):
-            num_pedido = value[i]
+            numeroDePedidos = value[i]
             repeticoes = value[i+1]
-            total_order['listOrder'][num_pedido] = repeticoes
+            dicionarioPedidos['dicionarioPedidos'][numeroDePedidos] = repeticoes
         
-        list_Order.append(total_order)
+        listaPedidos.append(dicionarioPedidos)
 
-    # print(list_Order)
-    return list_Order
+    # print(listaPedidos)
+    return listaPedidos
 
-def calculate_score(list_order, wave_pedidos, LB=None, UP=None):
-    qtd_total = 0
+def calculateScore(listaPedidos, wave_pedidos):
+    tamanho = 0
     pedidos_atendidos = set()
-    estoque_wave = wave_pedidos.copy()
+    estoque = wave_pedidos.copy()
 
-    for order in list_order:
-        pedido = order['listOrder']
+    for pedidos in listaPedidos:
+        pedido = pedidos['dicionarioPedidos']
         pode_atender = all(
-            estoque_wave.get(item, 0) >= qtd 
+            estoque.get(item, 0) >= qtd 
             for item, qtd in pedido.items()
             )
         
         if pode_atender:
             for item, qtd in pedido.items():
-                estoque_wave[item] -= qtd
-                qtd_total += qtd
-            pedidos_atendidos.add(order['id'])
-    # print(LB)
-    # print(qtd_total)
+                estoque[item] -= qtd
+                tamanho += qtd
+            pedidos_atendidos.add(pedidos['id'])
 
-    return qtd_total, list(pedidos_atendidos)
+    return tamanho, list(pedidos_atendidos)
 
-def verificaTamanhoUB(list_order, wave_pedidos, UP):
-    qtd_total = 0
+def verificaTamanhoUB(listaPedidos, wave_pedidos, UB):
+    tamanho = 0
     pedidos_atendidos = set()
-    estoque_wave = wave_pedidos.copy()
+    estoque = wave_pedidos.copy()
 
-    for order in list_order:
-        pedido = order['listOrder']
+    for pedidos in listaPedidos:
+        pedido = pedidos['dicionarioPedidos']
         pode_atender = all(
-            estoque_wave.get(item, 0) >= qtd 
+            estoque.get(item, 0) >= qtd 
             for item, qtd in pedido.items()
             )
         
         if pode_atender:
             for item, qtd in pedido.items():
-                estoque_wave[item] -= qtd
-                qtd_total += qtd
-            pedidos_atendidos.add(order['id'])
-    # print(UP, qtd_total)
+                estoque[item] -= qtd
+                tamanho += qtd
+            pedidos_atendidos.add(pedidos['id'])
+    # print(UB, tamanho)
 
-    return qtd_total > UP
+    return tamanho > UB
 
 def verificaTamanhoLB(wave, LB):
-    return wave['totalUnidades'] < LB
-
-def verificaTamanhoLBLoop(wave, LB):
-    return wave['totalUnidades'] > LB
+    return wave['tamanho'] < LB

@@ -1,126 +1,147 @@
 import random
 import time
+import numpy as np
 from types import new_class
 from Metodos_Arquivos.arquivo import *
-from Heuristic.utils import calculate_score, getAccessList, getOrderList, verificaTamanhoUB, verificaTamanhoLB
+from Heuristic.utils import calculateScore, getListaCorredor, getListaPedidos, verificaTamanhoUB, verificaTamanhoLB
 random.seed(6743)
+np.random.seed(6743)
 
-def build_wave(list_order, list_access, LB, UP, tipo):
+def construirWave(listaPedidos, listaCorredor, UB, tipo="gulosa"):
     wave = {
-        'idAccess': [],
+        'idCorredor': [],
         'itensDePedidosAtendidos': {},
         'pedidosAtendidos': [],
-        'totalUnidades': 0,
+        'tamanho': 0,
         'score': 0
     }
     
-    accesses = list_access.copy()
-    if tipo == 'random':
-        random.shuffle(accesses)
+    corredores = listaCorredor.copy()
+    if tipo == "aleatorio":
+        random.shuffle(corredores)
     
-    temp_items = {}
+    itensDePedidosAtendidos = {}
     
-    for access in accesses:
-        data = access['data']
+    for corredor in corredores:
+        data = corredor['data']
         for i in range(0, len(data), 2):
-            item_id = data[i]
+            idItem = data[i]
             quantidade = data[i+1]
-            temp_items[item_id] = temp_items.get(item_id, 0) + quantidade
+            itensDePedidosAtendidos[idItem] = itensDePedidosAtendidos.get(idItem, 0) + quantidade
         
-        if verificaTamanhoUB(list_order, temp_items, UP):
+        if verificaTamanhoUB(listaPedidos, itensDePedidosAtendidos, UB):
             break
         
-        wave['idAccess'].append(access['id'])
-        wave['itensDePedidosAtendidos'] = temp_items.copy()
+        wave['idCorredor'].append(corredor['id'])
+        wave['itensDePedidosAtendidos'] = itensDePedidosAtendidos.copy()
     
-    if wave['idAccess']:
-        wave['totalUnidades'], wave['pedidosAtendidos'] = calculate_score(
-            list_order, wave['itensDePedidosAtendidos'])
-        wave['score'] = wave['totalUnidades'] / len(wave['idAccess'])
+    if wave['idCorredor']:
+        wave['tamanho'], wave['pedidosAtendidos'] = calculateScore(
+            listaPedidos, wave['itensDePedidosAtendidos'])
+        wave['score'] = wave['tamanho'] / len(wave['idCorredor'])
     
     return wave
 
-def gerar_wave_a_partir_de_ids(ids, list_access, list_order, LP, UP):
+def gerarNovaWave(ids, listaCorredor, listaPedidos, UB):
     id = set(ids)
-    accesses = [a for a in list_access if a['id'] in id]
-    return build_wave(list_order, accesses, LP, UP, 'gulosa')
+    corredores = [a for a in listaCorredor if a['id'] in id]
+    return construirWave(listaPedidos, corredores, UB, 'gulosa')
 
-def refine_wave(wave, list_order, list_access, LP, UP):
-    atualIds = set(wave['idAccess'])
-    available_ids = [a['id'] for a in list_access if a['id'] not in atualIds]
+def refinarWave(wave, listaPedidos, listaCorredor, LB, UB):
+    idsCorredoresAtuais = set(wave['idCorredor'])
+    idsCorredoresDisponiveis = [a['id'] for a in listaCorredor if a['id'] not in idsCorredoresAtuais]
     
-    for id_out in wave['idAccess']:
-        for id_in in available_ids:
-            newIds = [id_in if id == id_out else id for id in wave['idAccess']]
-            newWave = gerar_wave_a_partir_de_ids(newIds, list_access, list_order, LP, UP)
+    for idCorredor in wave['idCorredor']:
+        for idDisponivel in idsCorredoresDisponiveis:
+            novoId = [idDisponivel if id == idCorredor else id for id in wave['idCorredor']]
+            vizinho = gerarNovaWave(novoId, listaCorredor, listaPedidos, UB)
             
-            if newWave['score'] > wave['score']:
-                return newWave
+            if vizinho['score'] > wave['score']:
+                return vizinho
     return wave
 
-def gerar_vizinhos(wave, list_access, list_order, LP, UP, tabuList, interacao):
+def atualizarPontuacaoOperacao(operacao, recompensa, listaPontuacao, taxa_aprendizado=0.1):
+    index = {"troca": 0, "remove": 1, "add": 2}[operacao]
+    listaPontuacao[index] = max(0, min(1, listaPontuacao[index] + taxa_aprendizado * recompensa))
+
+def escolher_operacao(listaPontuacao, temperatura=0.3):
+    scores = np.array(listaPontuacao)
+    exp_scores = np.exp(scores / temperatura)
+    probabilidades = exp_scores / exp_scores.sum()
+    return random.choices(["troca", "remove", "add"], weights=probabilidades)[0]
+
+def gerarVizinhos(wave, listaCorredor, listaPedidos, LB, UB, tabuList, interacao, listaPontuacao):
     vizinhos = []
-    atualIds = set(wave['idAccess'])
-    todosIds = {a['id'] for a in list_access}
-    available_ids = list(todosIds - atualIds)
+    idsCorredoresAtuais = set(wave['idCorredor'])
+
+    if not idsCorredoresAtuais:
+        return vizinhos
     
-    operations = {
-        'troca': lambda ids: (ids - {random.choice(list(ids))}) | {random.choice(available_ids)} if available_ids else ids,
+    todosIds = {a['id'] for a in listaCorredor}
+    idsCorredoresDisponiveis = list(todosIds - idsCorredoresAtuais)
+    
+    operacoes = {
+        'troca': lambda ids: (ids - {random.choice(list(ids))}) | {random.choice(idsCorredoresDisponiveis)} if idsCorredoresDisponiveis else ids,
         'remove': lambda ids: ids - {random.choice(list(ids))} if len(ids) > 1 else ids,
-        'add': lambda ids: ids | {random.choice(available_ids)} if available_ids else ids
+        'add': lambda ids: ids | {random.choice(idsCorredoresDisponiveis)} if idsCorredoresDisponiveis else ids
     }
     
     for _ in range(interacao):
-        operation = random.choice(list(operations.keys()))
-        newIds = operations[operation](atualIds)
+        operacao = escolher_operacao(listaPontuacao)
+        novoId = operacoes[operacao](idsCorredoresAtuais)
         
-        if newIds == atualIds or list(newIds) in tabuList:
+        if novoId == idsCorredoresAtuais or list(novoId) in tabuList:
+            atualizarPontuacaoOperacao(operacao, -0.02, listaPontuacao)
             continue
             
-        newWave = gerar_wave_a_partir_de_ids(newIds, list_access, list_order, LP, UP)
-        if verificaTamanhoLB(newWave, LP):
+        vizinho = gerarNovaWave(novoId, listaCorredor, listaPedidos, UB)
+
+        if verificaTamanhoLB(vizinho, LB):
+            atualizarPontuacaoOperacao(operacao, -0.02, listaPontuacao)
             continue
-        vizinhos.append(newWave)
+
+        recompensa = 0.01 + 0.1 * (vizinho['score'] - wave['score']) / max(1, wave['score'])
+        atualizarPontuacaoOperacao(operacao, recompensa, listaPontuacao)
+        vizinhos.append(vizinho)
     
     return vizinhos
 
-def reinicializacao_parcial(solucao, list_access, list_order, LP, UP, taxa):
-    ids = set(random.sample(solucao['idAccess'], max(1, int(len(solucao['idAccess']) * taxa))))
-    newIds = [a['id'] for a in list_access if a['id'] not in ids]
-    bestIds = set(random.sample(newIds, min(len(newIds), len(solucao['idAccess']) - len(ids)+1)))
-    return gerar_wave_a_partir_de_ids(ids | bestIds, list_access, list_order, LP, UP)
+def reiniciarWave(solucao, listaCorredor, listaPedidos, UB, taxa):
+    ids = set(random.sample(solucao['idCorredor'], max(1, int(len(solucao['idCorredor']) * taxa))))
+    novoId = [a['id'] for a in listaCorredor if a['id'] not in ids]
+    waveAtualIds = set(random.sample(novoId, min(len(novoId), len(solucao['idCorredor']) - len(ids)+1)))
+    return gerarNovaWave(ids | waveAtualIds, listaCorredor, listaPedidos, UB)
 
-def rso(wave, list_order, list_access, LP, UP, max_inter=100):
-    best = wave
-    tabuList = []
-    historico = [best]
+def rso(wave, listaPedidos, listaCorredor, LB, UB, maximoInteracao=100, tempoLimite=10):
+    waveAtual = wave
+    historico = [waveAtual]
     vizinhos = []
     tabuList = []
     tabuTenure = 1
-    historico = []
     estagnado = 0
     interacao = 5
     maxVizinhos = 30
-    interacao_maxVizinhos_counter = 0
+    interacaoMaxVizinhos = 0
+    historicoInteracao = []
+    listaPontuacao = [0.33, 0.33, 0.34] 
     
-    if max_inter <= 50:
-        patience = int(max_inter/2)
-    elif 51 <= max_inter <= 100:
-        patience = int(max_inter/4)
-    else:
-        patience = int(max_inter/6)
+    patience = int(maximoInteracao * 0.2)
+    patienceLR = int(patience * 0.25)
+    
+    execucao = 0
+    tempoInicial = time.time()
+    finalizarExecucao  = tempoInicial + (tempoLimite * 60)
 
-    patienceLR = patience/4
-
-    for _ in range(max_inter):
-        vizinhos = gerar_vizinhos(best, list_access, list_order, LP, UP, tabuList, interacao)
+    while time.time() < finalizarExecucao:
+        execucao += 1
+        vizinhos = gerarVizinhos(waveAtual, listaCorredor, listaPedidos, LB, UB, tabuList, interacao, listaPontuacao)
 
         # tenho q fazer isso aqui ser otimizado
         if estagnado >= patienceLR:
             taxa = random.choice([0.1, 0.2, 0.3, 0.4])
-            vizinhos.append(reinicializacao_parcial(best, list_access, list_order, LP, UP, taxa))
+            vizinhos.append(reiniciarWave(waveAtual, listaCorredor, listaPedidos, UB, taxa))
             # interacao = max(interacao - 1, 5)
-            patienceLR += patience/4
+            patienceLR += int(patience * 0.25)
         
         if not vizinhos:
             estagnado += 1
@@ -129,12 +150,13 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
             
         melhorVizinho = max(vizinhos, key=lambda w: w['score'])
 
-        tabuList.append(melhorVizinho['idAccess'])
+        tabuList.append(melhorVizinho['idCorredor'])
         if len(tabuList) > tabuTenure:
             tabuList.pop(0)
         
-        if melhorVizinho['score'] > best['score']:
-            best = melhorVizinho
+        if melhorVizinho['score'] > waveAtual['score']:
+            waveAtual = melhorVizinho
+            historicoInteracao.append([round(time.time() - tempoInicial, 4), round(melhorVizinho['score'], 2), execucao])
             estagnado = 0
         else:
             estagnado += 1
@@ -148,52 +170,53 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
         historico.append(melhorVizinho)
 
         if interacao == maxVizinhos:
-            interacao_maxVizinhos_counter += 1
+            interacaoMaxVizinhos += 1
         else:
-            interacao_maxVizinhos_counter -= 1
+            interacaoMaxVizinhos -= 1
 
-        if interacao_maxVizinhos_counter > 5:  
+        if interacaoMaxVizinhos > 5:  
             maxVizinhos += 5
-            interacao_maxVizinhos_counter = 0
+            interacaoMaxVizinhos = 0
         
         if estagnado >= patience:
-            taxa = random.choice([0.5, 0.6, 0.7, 0.8])
-            best = reinicializacao_parcial(best, list_access, list_order, LP, UP, taxa)
-            estagnado = 0
-            max_inter += 20
-            patienceLR = patience/4
-            if max_inter <= 50:
-                patience = int(max_inter/2)
-            elif 51 <= max_inter <= 100:
-                patience = int(max_inter/4)
-            else:
-                patience = int(max_inter/6)
-    
-    best = max(historico, key=lambda w: w['score'])
-    # print(best)
-    # print(max_inter)
-    return best
+            taxa = random.choice([0.7, 0.8])
+            vizinho = reiniciarWave(waveAtual, listaCorredor, listaPedidos, UB, taxa)
 
-def construction(order, access, LP, UP):
-    list_order = getOrderList(order)
-    list_access = getAccessList(access)
+            if vizinho['idCorredor']:
+                waveAtual = vizinho
+
+            estagnado = 0
+            maximoInteracao += 50
+
+            patience = int(maximoInteracao * 0.2)
+            patienceLR = int(patience * 0.25)
+    
+    waveAtual = max(historico, key=lambda w: w['score'])
+    print(historicoInteracao, maximoInteracao, listaPontuacao)
+    print(round(time.time() - tempoInicial, 2))
+    return waveAtual
+
+def construction(pedidos, corredor, LB, UB):
+    listaPedidos = getListaPedidos(pedidos)
+    listaCorredor = getListaCorredor(corredor)
     
     start = time.perf_counter()
-    wave = build_wave(list_order, list_access, LP, UP, 'random')
+    wave = construirWave(listaPedidos, listaCorredor, UB, "aleatorio")
     heuristic_time = time.perf_counter() - start
     heuristic_score = wave['score']
 
     start_refi = time.perf_counter()
-    waveRefinmanto =refine_wave(wave, list_order, list_access, LP, UP)
+    waveRefinmanto =refinarWave(wave, listaPedidos, listaCorredor, LB, UB)
     refinamento_time = time.perf_counter() - start
     refinamento_score = waveRefinmanto['score']
     
     start_rso = time.perf_counter()
-    best = rso(wave, list_order, list_access, LP, UP)
+    melhorWave = rso(wave, listaPedidos, listaCorredor, LB, UB)
     rso_time = time.perf_counter() - start_rso
 
-    print(wave)
+    # print(wave)
+    # print()
+    print(melhorWave['score'])
     print()
-    print(best)
     
-    return best, heuristic_time, heuristic_score, refinamento_time, refinamento_score, rso_time
+    return melhorWave, heuristic_time, heuristic_score, refinamento_time, refinamento_score, rso_time

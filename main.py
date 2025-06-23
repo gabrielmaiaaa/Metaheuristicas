@@ -11,9 +11,9 @@ def main():
     arquivo = sys.argv[1].replace('.txt', '') 
     # arquivo = 'instance_0019'
     instancia = LerArquivo(arquivo)
-    pedidos, corredores, LB, UP = Operar(instancia)
-    SalvarArquivo(pedidos, corredores, LB, UP, arquivo)
-    wave, time, score, timeRefinamento, scoreRefinamento, timeRSO, = construction(pedidos, corredores, LB, UP)
+    pedidos, corredores, LB, UB = Operar(instancia)
+    SalvarArquivo(pedidos, corredores, LB, UB, arquivo)
+    wave, time, score, timeRefinamento, scoreRefinamento, timeRSO, = construction(pedidos, corredores, LB, UB)
     SalvarResultados(wave, time, score, timeRefinamento, scoreRefinamento, timeRSO, arquivo)
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 def Operar(instancia):
     cabecalho = instancia[0]
     corpo = instancia[1:-1]
-    LB, UP = instancia[-1]
+    LB, UB = instancia[-1]
     pedidos = {}
     corredores = {}
 
@@ -20,6 +20,6 @@ def Operar(instancia):
             
     # print(f"Pedidos: {pedidos}")
     # print(f"Corredores: {corredores}")
-    # print(f"LB: {LB} e UP: {UP}")
+    # print(f"LB: {LB} e UB: {UB}")
     
-    return pedidos, corredores, LB, UP
+    return pedidos, corredores, LB, UB
