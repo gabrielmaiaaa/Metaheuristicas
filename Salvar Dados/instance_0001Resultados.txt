@@ -3,12 +3,12 @@ itensDePedidosAtendidos: 11, 17, 28, 40, 52, 54, 55, 56, 62, 75, 77, 80, 83, 90,
 pedidosAtendidos: 41, 42, 11, 46, 19, 55, 23, 24, 57, 26, 60, 29
 totalUnidades: 45
 score: 15.0
-Tempo gasto para construir o RSO: 0.5783223999897018
+Tempo gasto para construir o RSO: 0.5207625000039116
 
 Heuristica
 Score: 1.2765957446808511
-Tempo: 0.002031999989412725
+Tempo: 0.0021598000021185726
 
 Heuristica Refinamento
 Score: 2.4
-Tempo: 0.00317949999589473
+Tempo: 0.0033130999945569783

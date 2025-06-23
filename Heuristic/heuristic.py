@@ -87,13 +87,7 @@ def gerar_vizinhos(wave, list_access, list_order, LP, UP, tabuList, interacao):
 def reinicializacao_parcial(solucao, list_access, list_order, LP, UP, taxa):
     ids = set(random.sample(solucao['idAccess'], max(1, int(len(solucao['idAccess']) * taxa))))
     newIds = [a['id'] for a in list_access if a['id'] not in ids]
-    # print(f'ID: {ids}')
-    # print(f'newIds: {newIds}')
     bestIds = set(random.sample(newIds, min(len(newIds), len(solucao['idAccess']) - len(ids)+1)))
-    # print(f'Best: {bestIds}')
-    # print(f'2: {ids | bestIds}')
-    # print(solucao['idAccess'])
-    # print()
     return gerar_wave_a_partir_de_ids(ids | bestIds, list_access, list_order, LP, UP)
 
 def rso(wave, list_order, list_access, LP, UP, max_inter=100):
@@ -140,8 +134,6 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
             tabuList.pop(0)
         
         if melhorVizinho['score'] > best['score']:
-            # print(best)
-            # print()
             best = melhorVizinho
             estagnado = 0
         else:
@@ -177,17 +169,10 @@ def rso(wave, list_order, list_access, LP, UP, max_inter=100):
             else:
                 patience = int(max_inter/6)
     
-    bes = max(historico, key=lambda w: w['score'])
-    print(bes)
-    historico.sort(key=lambda score: score['score'], reverse=True)
-    soma = 0
-    # for newWave in historico:
-    #     if verificaTamanhoLB(newWave, LP):
-    #         print("a")
-    #         print(newWave)
-    #         return newWave
-    print(max_inter)
-    return bes
+    best = max(historico, key=lambda w: w['score'])
+    # print(best)
+    # print(max_inter)
+    return best
 
 def construction(order, access, LP, UP):
     list_order = getOrderList(order)
@@ -206,5 +191,9 @@ def construction(order, access, LP, UP):
     start_rso = time.perf_counter()
     best = rso(wave, list_order, list_access, LP, UP)
     rso_time = time.perf_counter() - start_rso
+
+    print(wave)
+    print()
+    print(best)
     
     return best, heuristic_time, heuristic_score, refinamento_time, refinamento_score, rso_time
