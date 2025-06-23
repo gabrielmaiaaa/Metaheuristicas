@@ -1,14 +1,14 @@
-idCorredor: 23, 19, 27, 75, 88, 60, 62, 83, 32, 58, 76, 80
-itensDePedidosAtendidos: 7, 12, 13, 34, 14, 17, 19, 40, 35, 42, 46, 22, 32, 48, 0, 39, 6, 20, 2, 37, 16, 26, 31, 30, 27
-pedidosAtendidos: 0, 1, 5, 7, 8, 10, 12
-tamanho: 33
-score: 2.75
-Tempo gasto para construir o RSO: 6.015425600000526
+idCorredor: 23, 19
+itensDePedidosAtendidos: 7, 12, 13, 34, 14, 17, 19, 40
+pedidosAtendidos: 10
+tamanho: 7
+score: 3.5
+Tempo gasto para construir o RSO: 600.0362448999986
 
 Heuristica
 Score: 0.543859649122807
-Tempo: 0.0007605999999213964
+Tempo: 0.000765300002967706
 
 Heuristica Refinamento
 Score: 0.6666666666666666
-Tempo: 0.0015887000008660834
+Tempo: 0.0015901000006124377
