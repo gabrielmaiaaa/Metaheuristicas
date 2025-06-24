@@ -1,0 +1,20 @@
+idCorredor: 2, 23
+itensDePedidosAtendidos: 5, 11, 18, 19, 50, 7, 12, 13, 34
+pedidosAtendidos: 10
+tamanho: 7
+score: 3.5
+Quantidade total de execucoes feitas: 4253
+Tempo gasto para construir o RSO: 180.06987669999944
+
+--- Momento que achou o melhor ---
+Tempo gasto: 66.60434651374817
+Score: 3.5
+Quantidade de Interacoes: 2428
+
+Heuristica
+Score: 0.6206896551724138
+Tempo: 0.0007823999912943691
+
+Heuristica Refinamento
+Score: 0.6896551724137931
+Tempo: 0.0024222999927587807
