@@ -3,12 +3,18 @@ itensDePedidosAtendidos: 0, 1, 2, 4, 3
 pedidosAtendidos: 0, 1, 2, 4
 tamanho: 10
 score: 5.0
-Tempo gasto para construir o RSO: 12.005560899997363
+Quantidade total de execuções feitas: 1191
+Tempo gasto para construir o RSO: 6.008289599994896
+
+--- Momento que achou o melhor ---
+Tempo gasto: 0.04300212860107422
+Score: 5.0
+Quantidade de Interacoes: 53
 
 Heuristica
 Score: 5.0
-Tempo: 5.3699994168709964e-05
+Tempo: 5.4499992984347045e-05
 
 Heuristica Refinamento
 Score: 5.0
-Tempo: 0.0001607999947736971
+Tempo: 0.00010889999975915998

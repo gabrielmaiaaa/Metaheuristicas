@@ -3,12 +3,17 @@ itensDePedidosAtendidos: 11, 17, 28, 40, 52, 54, 55, 56, 62, 75, 77, 80, 83, 90,
 pedidosAtendidos: 41, 42, 11, 46, 19, 55, 23, 24, 57, 26, 60, 29
 tamanho: 45
 score: 15.0
-Tempo gasto para construir o RSO: 12.009339800002635
+Tempo gasto para construir o RSO: 6.01618450001115
+
+--- Momento que achou o melhor ---
+Tempo gasto: 0.24314332008361816
+Score: 15.0
+Quantidade de Interacoes: 40
 
 Heuristica
 Score: 1.2765957446808511
-Tempo: 0.0020303000055719167
+Tempo: 0.001967699994565919
 
 Heuristica Refinamento
 Score: 2.4
-Tempo: 0.003290600005129818
+Tempo: 0.0011263000051258132

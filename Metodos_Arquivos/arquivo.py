@@ -16,7 +16,7 @@ def SalvarArquivo(pedidos, corredores, LB, UP, nome):
         f.write("\nLimite Inferior e Limite Superior:\n")
         f.write(f"{LB} {UP}\n")
 
-def SalvarResultados(wave, time, score, timeRefinamento, scoreRefinamento, timeRSO, nome):
+def SalvarResultados(wave, time, score, timeRefinamento, scoreRefinamento, timeRSO, nome, interacao, execucao):
     cont = 0
     with open(f"Salvar Dados/{nome}Resultados.txt", 'w') as f:
         for key, value in wave.items():
@@ -25,7 +25,17 @@ def SalvarResultados(wave, time, score, timeRefinamento, scoreRefinamento, timeR
                 f.write(f"{key}: {', '.join(map(str, value))}\n")
             else:
                 f.write(f"{key}: {value}\n")
+        f.write(f"Quantidade total de execuções feitas: {execucao}\n")
         f.write(f"Tempo gasto para construir o RSO: {timeRSO}\n")
+
+        if interacao:
+            f.write("\n--- Momento que achou o melhor ---\n")
+            f.write(f"Tempo gasto: {interacao[0]}\n")
+            f.write(f"Score: {interacao[1]}\n")
+            f.write(f"Quantidade de Interacoes: {interacao[2]}\n")
+        else: 
+            f.write("\n--- Momento que achou o melhor ---\n")
+            f.write(f"O historico de interacoes veio vazio.\n")
 
         f.write('\nHeuristica\n')
         f.write(f"Score: {score}\n")

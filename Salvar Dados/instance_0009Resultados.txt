@@ -3,12 +3,15 @@ itensDePedidosAtendidos: 12, 33, 46, 65, 86, 125, 126, 128, 139, 148, 152, 197, 
 pedidosAtendidos: 1, 5, 6, 7, 19, 21, 22, 24, 25, 31, 32, 33, 37, 40, 42, 44, 50, 51, 54, 63, 64, 68, 69
 tamanho: 84
 score: 3.230769230769231
-Tempo gasto para construir o RSO: 12.016266200000246
+Tempo gasto para construir o RSO: 60.062725700001465
+
+--- Momento que achou o melhor ---
+O historico de interacoes veio vazio.
 
 Heuristica
 Score: 0.695852534562212
-Tempo: 0.011677599999529775
+Tempo: 0.011985000004642643
 
 Heuristica Refinamento
 Score: 0.8693181818181818
-Tempo: 0.03468050000083167
+Tempo: 0.021920700004557148

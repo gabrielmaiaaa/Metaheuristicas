@@ -114,7 +114,7 @@ def reiniciarWave(solucao, listaCorredor, listaPedidos, UB, taxa):
     waveAtualIds = set(random.sample(novoId, min(len(novoId), len(solucao['idCorredor']) - len(ids)+1)))
     return gerarNovaWave(ids | waveAtualIds, listaCorredor, listaPedidos, UB)
 
-def rso(wave, listaPedidos, listaCorredor, LB, UB, maximoInteracao=100, tempoLimite=0.2):
+def rso(wave, listaPedidos, listaCorredor, LB, UB, maximoInteracao=100, tempoLimite=0.1):
     waveAtual = wave
     historico = [waveAtual]
     vizinhos = []
@@ -158,7 +158,7 @@ def rso(wave, listaPedidos, listaCorredor, LB, UB, maximoInteracao=100, tempoLim
         
         if melhorVizinho['score'] > waveAtual['score']:
             waveAtual = melhorVizinho
-            historicoInteracao.append([round(time.time() - tempoInicial, 4), round(melhorVizinho['score'], 2), execucao])
+            historicoInteracao.append([time.time() - tempoInicial, round(melhorVizinho['score'], 2), execucao])
             estagnado = 0
         else:
             estagnado += 1
@@ -189,39 +189,44 @@ def rso(wave, listaPedidos, listaCorredor, LB, UB, maximoInteracao=100, tempoLim
 
             estagnado = 0
             maximoInteracao += 50
-            # listaPontuacao[0] = max(0, listaPontuacao[0] - 0.2) 
-            # listaPontuacao[1] = max(0, listaPontuacao[1] - 0.2) 
-            # listaPontuacao[2] = max(0, listaPontuacao[2] - 0.2) 
 
             patience = int(maximoInteracao * 0.2)
             patienceLR = int(patience * 0.25)
+            listaPontuacao = [0.33, 0.33, 0.34] 
     
     waveAtual = max(historico, key=lambda w: w['score'])
     print(historicoInteracao, maximoInteracao, listaPontuacao)
     print(round(time.time() - tempoInicial, 2))
-    return waveAtual
+    return waveAtual, historicoInteracao, execucao
 
-def construction(pedidos, corredor, LB, UB):
+def verdadeiroTempo(wave, historicoInteracao):
+    for interacao in historicoInteracao:
+        if wave['score'] == interacao[1]:
+            return interacao
+
+def construction(pedidos, corredor, LB, UB, tempoDedicado):
     listaPedidos = getListaPedidos(pedidos)
     listaCorredor = getListaCorredor(corredor)
     
     start = time.perf_counter()
     wave = construirWave(listaPedidos, listaCorredor, UB, "aleatorio")
-    heuristic_time = time.perf_counter() - start
-    heuristic_score = wave['score']
+    heuristicaTempo = time.perf_counter() - start
+    heuristicaScore = wave['score']
 
-    start_refi = time.perf_counter()
+    start = time.perf_counter()
     waveRefinmanto =refinarWave(wave, listaPedidos, listaCorredor, LB, UB)
-    refinamento_time = time.perf_counter() - start
-    refinamento_score = waveRefinmanto['score']
+    refinamentoTempo = time.perf_counter() - start
+    refinamentoScore = waveRefinmanto['score']
     
-    start_rso = time.perf_counter()
-    melhorWave = rso(wave, listaPedidos, listaCorredor, LB, UB)
-    rso_time = time.perf_counter() - start_rso
+    inicioRSO = time.perf_counter()
+    melhorWave, historicoInteracao, execucao = rso(wave, listaPedidos, listaCorredor, LB, UB, tempoLimite=tempoDedicado)
+    rsoTempo = time.perf_counter() - inicioRSO
+
+    interacao = verdadeiroTempo(melhorWave, historicoInteracao)
 
     # print(wave)
     # print()
     print(melhorWave['score'])
     print()
     
-    return melhorWave, heuristic_time, heuristic_score, refinamento_time, refinamento_score, rso_time
+    return melhorWave, heuristicaTempo, heuristicaScore, refinamentoTempo, refinamentoScore, rsoTempo, interacao, execucao
