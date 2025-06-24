@@ -4,8 +4,8 @@ import numpy as np
 from types import new_class
 from Metodos_Arquivos.arquivo import *
 from Heuristic.utils import calculateScore, getListaCorredor, getListaPedidos, verificaTamanhoUB, verificaTamanhoLB
-random.seed(31072004)
-np.random.seed(31072004)
+random.seed(6743)
+np.random.seed(6743)
 
 def construirWave(listaPedidos, listaCorredor, UB, tipo="gulosa"):
     wave = {

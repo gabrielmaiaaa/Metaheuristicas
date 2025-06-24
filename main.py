@@ -22,27 +22,27 @@ def main():
         case "instance_0004":
             tempoDedicado = 3
         case "instance_0005":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0006":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0007":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0008":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0009":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0010":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0011":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0012":
             tempoDedicado = 1
         case "instance_0013":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0014":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0015":
-            tempoDedicado = 3
+            tempoDedicado = 10
         case "instance_0016":
             tempoDedicado = 0.1
         case "instance_0017":
