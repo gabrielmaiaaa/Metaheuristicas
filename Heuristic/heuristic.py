@@ -158,7 +158,7 @@ def rso(wave, listaPedidos, listaCorredor, LB, UB, maximoInteracao=100, tempoLim
         
         if melhorVizinho['score'] > waveAtual['score']:
             waveAtual = melhorVizinho
-            historicoInteracao.append([time.time() - tempoInicial, round(melhorVizinho['score'], 2), execucao])
+            historicoInteracao.append([time.time() - tempoInicial, melhorVizinho['score'], execucao])
             estagnado = 0
         else:
             estagnado += 1
@@ -213,7 +213,6 @@ def construction(pedidos, corredor, LB, UB, tempoDedicado):
     heuristicaTempo = time.perf_counter() - start
     heuristicaScore = wave['score']
 
-    start = time.perf_counter()
     waveRefinmanto =refinarWave(wave, listaPedidos, listaCorredor, LB, UB)
     refinamentoTempo = time.perf_counter() - start
     refinamentoScore = waveRefinmanto['score']

@@ -1,0 +1,20 @@
+idCorredor: 31, 181, 101, 144
+itensDePedidosAtendidos: 30, 32, 48, 75, 82, 99, 103, 114, 119, 183, 191, 218, 226, 248, 270, 276, 24, 43, 52, 85, 108, 195, 12, 16, 51, 67, 228, 303, 206
+pedidosAtendidos: 89, 97, 103, 105, 112, 81, 25, 125
+tamanho: 45
+score: 11.25
+Quantidade total de execucoes feitas: 871
+Tempo gasto para construir o RSO: 60.098239999992074
+
+--- Momento que achou o melhor ---
+Tempo gasto: 19.88009786605835
+Score: 11.25
+Quantidade de Interacoes: 386
+
+Heuristica
+Score: 1.3409090909090908
+Tempo: 0.01487470000574831
+
+Heuristica Refinamento
+Score: 1.4308943089430894
+Tempo: 0.030070900000282563

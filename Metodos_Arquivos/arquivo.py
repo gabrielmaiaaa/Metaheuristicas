@@ -18,14 +18,14 @@ def SalvarArquivo(pedidos, corredores, LB, UP, nome):
 
 def SalvarResultados(wave, time, score, timeRefinamento, scoreRefinamento, timeRSO, nome, interacao, execucao):
     cont = 0
-    with open(f"Salvar Dados/{nome}Resultados.txt", 'w') as f:
+    with open(f"output/Teste1/{nome}Resultados.txt", 'w') as f:
         for key, value in wave.items():
             cont += 1
             if cont <= 3:
                 f.write(f"{key}: {', '.join(map(str, value))}\n")
             else:
                 f.write(f"{key}: {value}\n")
-        f.write(f"Quantidade total de execuções feitas: {execucao}\n")
+        f.write(f"Quantidade total de execucoes feitas: {execucao}\n")
         f.write(f"Tempo gasto para construir o RSO: {timeRSO}\n")
 
         if interacao:
